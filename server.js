@@ -37,7 +37,7 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
         {
           params: {
             vs_currency: currency,
-            ids: topPriorityCoinIds.join(","),
+            ids: topPriorityCoinIds,
             order: "market_cap_desc",
             per_page: 100,
             page: 1,
