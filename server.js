@@ -29,35 +29,60 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
   try {
     const { topPriorityCoinIds } = req.params;
     const currency = "usd";
-    const topPriorityResponse = await fetch(
-      `${COIN_GECKO_API_URL}/coins/markets?vs_currency=${currency}&ids=${topPriorityCoinIds.join(
-        ","
-      )}&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=24h`
-    );
-    if (!topPriorityResponse.ok) {
-      throw new Error(
-        `HTTP error fetching top priority coins! status: ${topPriorityResponse.status}`
-      );
-    }
-    const topPriorityData = await topPriorityResponse.json();
 
-    const allCoinsResponse = await fetch(
-      `${COIN_GECKO_API_URL}/coins/markets?vs_currency=${currency}&order=market_cap_desc&per_page=250&page=1&sparkline=false&price_change_percentage=24h`
-    );
-    if (!allCoinsResponse.ok) {
-      throw new Error(
-        `HTTP error fetching all coins! status: ${allCoinsResponse.status}`
+    try {
+      // Fetch top priority coins
+      const topPriorityResponse = await axios.get(
+        `${COIN_GECKO_API_URL}/coins/markets`,
+        {
+          params: {
+            vs_currency: currency,
+            ids: topPriorityCoinIds.split(","),
+            order: "market_cap_desc",
+            per_page: 100,
+            page: 1,
+            sparkline: false,
+            price_change_percentage: "24h",
+          },
+        }
       );
+
+      // Fetch all coins
+      const allCoinsResponse = await axios.get(
+        `${COIN_GECKO_API_URL}/coins/markets`,
+        {
+          params: {
+            vs_currency: currency,
+            order: "market_cap_desc",
+            per_page: 250,
+            page: 1,
+            sparkline: false,
+            price_change_percentage: "24h",
+          },
+        }
+      );
+
+      // Filter out top priority coins from all coins
+      const topPriorityData = topPriorityResponse.data || [];
+      const allCoinsData = allCoinsResponse.data || [];
+      const otherCoinsData = allCoinsData.filter(
+        (coin) => !topPriorityCoinIds.split(",").includes(coin.id)
+      );
+
+      // Combine top priority coins and other coins
+      const combinedTopMovers = [...topPriorityData, ...otherCoinsData];
+
+      res.json({
+        data: combinedTopMovers,
+      });
+    } catch (error) {
+      console.error("Error fetching coin data:", error.message);
+      res.status(error.response?.status || 500).json({
+        error: error.message,
+        details:
+          "Failed to fetch coin data. Please check the CoinGecko API or your request parameters.",
+      });
     }
-    const allCoinsData = await allCoinsResponse.json();
-    // Filtering top priority coins from others (no duplicates)
-    const otherCoinsData = allCoinsData.filter(
-      (coin) => !topPriorityCoinIds.includes(coin.id)
-    );
-    const combinedTopMovers = [...topPriorityData, ...otherCoinsData];
-    res.json({
-      data: combinedTopMovers,
-    });
   } catch (error) {
     res.status(500).json({
       error: error.message,
