@@ -37,7 +37,7 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
         {
           params: {
             vs_currency: currency,
-            ids: topPriorityCoinIds.split(","),
+            ids: topPriorityCoinIds.join(","),
             order: "market_cap_desc",
             per_page: 100,
             page: 1,
@@ -66,7 +66,7 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
       const topPriorityData = topPriorityResponse.data || [];
       const allCoinsData = allCoinsResponse.data || [];
       const otherCoinsData = allCoinsData.filter(
-        (coin) => !topPriorityCoinIds.split(",").includes(coin.id)
+        (coin) => !topPriorityCoinIds.includes(coin.id)
       );
 
       // Combine top priority coins and other coins
