@@ -70,7 +70,7 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
       );
 
       // Combine top priority coins and other coins
-      const combinedTopMovers = [...otherCoinsData];
+      const combinedTopMovers = [...topPriorityData, ...otherCoinsData];
 
       res.json(combinedTopMovers);
     } catch (error) {
