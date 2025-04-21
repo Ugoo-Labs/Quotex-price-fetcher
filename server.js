@@ -32,29 +32,14 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
 
     try {
       // Fetch top priority coins
-      //   const topPriorityResponse = await axios.get(
-      //     `${COIN_GECKO_API_URL}/coins/markets`,
-      //     {
-      //       params: {
-      //         vs_currency: currency,
-      //         ids: topPriorityCoinIds.join(","),
-      //         order: "market_cap_desc",
-      //         per_page: 100,
-      //         page: 1,
-      //         sparkline: false,
-      //         price_change_percentage: "24h",
-      //       },
-      //     }
-      //   );
-
-      // Fetch all coins
-      const allCoinsResponse = await axios.get(
+      const topPriorityResponse = await axios.get(
         `${COIN_GECKO_API_URL}/coins/markets`,
         {
           params: {
             vs_currency: currency,
+            ids: topPriorityCoinIds.join(","),
             order: "market_cap_desc",
-            per_page: 250,
+            per_page: 100,
             page: 1,
             sparkline: false,
             price_change_percentage: "24h",
@@ -62,15 +47,30 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
         }
       );
 
+      // Fetch all coins
+      //   const allCoinsResponse = await axios.get(
+      //     `${COIN_GECKO_API_URL}/coins/markets`,
+      //     {
+      //       params: {
+      //         vs_currency: currency,
+      //         order: "market_cap_desc",
+      //         per_page: 250,
+      //         page: 1,
+      //         sparkline: false,
+      //         price_change_percentage: "24h",
+      //       },
+      //     }
+      //   );
+
       // Filter out top priority coins from all coins
-      const topPriorityData = [];
-      const allCoinsData = allCoinsResponse.data || [];
+      const topPriorityData = topPriorityResponse.data || [];
+      //  const allCoinsData = allCoinsResponse.data || [];
       //   const otherCoinsData = allCoinsData.filter(
       //     (coin) => !topPriorityCoinIds.includes(coin.id)
       //   );
 
       // Combine top priority coins and other coins
-      const combinedTopMovers = [...allCoinsData];
+      const combinedTopMovers = [topPriorityData];
 
       res.json({
         data: combinedTopMovers,
