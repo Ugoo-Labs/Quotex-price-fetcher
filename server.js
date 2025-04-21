@@ -65,12 +65,12 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
       // Filter out top priority coins from all coins
       const topPriorityData = [];
       const allCoinsData = allCoinsResponse.data || [];
-      const otherCoinsData = allCoinsData.filter(
-        (coin) => !topPriorityCoinIds.includes(coin.id)
-      );
+      //   const otherCoinsData = allCoinsData.filter(
+      //     (coin) => !topPriorityCoinIds.includes(coin.id)
+      //   );
 
       // Combine top priority coins and other coins
-      const combinedTopMovers = [...topPriorityData, ...otherCoinsData];
+      const combinedTopMovers = [...allCoinsData];
 
       res.json({
         data: combinedTopMovers,
