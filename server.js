@@ -32,20 +32,20 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
 
     try {
       // Fetch top priority coins
-      const topPriorityResponse = await axios.get(
-        `${COIN_GECKO_API_URL}/coins/markets`,
-        {
-          params: {
-            vs_currency: currency,
-            ids: topPriorityCoinIds.join(","),
-            order: "market_cap_desc",
-            per_page: 100,
-            page: 1,
-            sparkline: false,
-            price_change_percentage: "24h",
-          },
-        }
-      );
+      //   const topPriorityResponse = await axios.get(
+      //     `${COIN_GECKO_API_URL}/coins/markets`,
+      //     {
+      //       params: {
+      //         vs_currency: currency,
+      //         ids: topPriorityCoinIds.join(","),
+      //         order: "market_cap_desc",
+      //         per_page: 100,
+      //         page: 1,
+      //         sparkline: false,
+      //         price_change_percentage: "24h",
+      //       },
+      //     }
+      //   );
 
       // Fetch all coins
       const allCoinsResponse = await axios.get(
@@ -63,7 +63,7 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
       );
 
       // Filter out top priority coins from all coins
-      const topPriorityData = topPriorityResponse.data || [];
+      const topPriorityData = [];
       const allCoinsData = allCoinsResponse.data || [];
       const otherCoinsData = allCoinsData.filter(
         (coin) => !topPriorityCoinIds.includes(coin.id)
