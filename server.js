@@ -12,6 +12,7 @@ const corsOptions = {
     "http://127.0.0.1:5173",
     "https://your-frontend-url.netlify.app",
     "http://localhost:3000",
+    "https://joljv-6aaaa-aaaah-qqbmq-cai.icp0.io",
   ],
   methods: ["GET", "POST"],
   credentials: true,
