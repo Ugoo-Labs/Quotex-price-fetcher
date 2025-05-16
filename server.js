@@ -22,9 +22,10 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 const COIN_GECKO_API_URL = "https://api.coingecko.com/api/v3";
+const CMC_API_KEY =
+  process.env.CMC_API_KEY || "4d1ecf1e-d930-4c5b-81d1-96b080287f47";
 
-const COINGECKO_API_KEY =
-  process.env.COINGECKO_API_KEY || "CG-GpsGYn9NJwxAALRS5ZXHwKDE";
+const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
 
 app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
   try {
@@ -40,13 +41,17 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
             vs_currency: currency,
             ids: topPriorityCoinIds,
             order: "market_cap_desc",
-            per_page: 100,
+            per_page: 10,
             page: 1,
             sparkline: false,
             price_change_percentage: "24h",
           },
         }
       );
+
+      console.log(topPriorityResponse.data);
+
+      res.json({ data: topPriorityResponse.data });
 
       // Fetch all coins
       const allCoinsResponse = await axios.get(
@@ -75,7 +80,7 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
 
       res.json(combinedTopMovers);
     } catch (error) {
-      console.error("Error fetching coin data:", error.message);
+      console.error(error);
       res.status(error.response?.status || 500).json({
         error: error.message,
         details:
@@ -83,10 +88,40 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       error: error.message,
       details: "Make sure you are using the correct coins ID from CoinGecko",
     });
+  }
+});
+
+app.get("/api/cmc/price/:coinIds", async (req, res) => {
+  try {
+    let { coinIds } = req.params;
+    const response = await axios.get(
+      "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest",
+      {
+        params: {
+          slug: coinIds,
+        },
+        headers: {
+          "X-CMC_PRO_API_KEY": CMC_API_KEY,
+        },
+      }
+    );
+
+    if (response.data) {
+      let data = response.data.data;
+
+      let details = Object.values(data)[0].quote.USD;
+      res.json({
+        price: details.price,
+        price_change_24h: details.percent_change_24h,
+      }); // });
+    }
+  } catch (e) {
+    console.log(e);
   }
 });
 
