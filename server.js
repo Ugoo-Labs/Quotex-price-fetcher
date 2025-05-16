@@ -49,8 +49,6 @@ app.get("/api/prices/:topPriorityCoinIds", async (req, res) => {
         }
       );
 
-      console.log(topPriorityResponse.data);
-
       // Fetch all coins
       const allCoinsResponse = await axios.get(
         `${COIN_GECKO_API_URL}/coins/markets`,
