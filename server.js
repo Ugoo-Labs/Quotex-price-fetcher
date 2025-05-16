@@ -22,7 +22,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 const COIN_GECKO_API_URL = "https://api.coingecko.com/api/v3";
-const CMC_API_KEY = process.env.CMC_API_KEY;
+const CMC_API_KEY =
+  process.env.CMC_API_KEY || "4d1ecf1e-d930-4c5b-81d1-96b080287f47";
 
 const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
 
@@ -99,11 +100,11 @@ app.get("/api/cmc/price/:coinIds", async (req, res) => {
     const response = await axios.get(
       "https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest",
       {
-        params: {
-          slug: coinIds,
-        },
         headers: {
           "X-CMC_PRO_API_KEY": CMC_API_KEY,
+        },
+        params: {
+          slug: coinIds,
         },
       }
     );
