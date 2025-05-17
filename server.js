@@ -22,8 +22,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 const COIN_GECKO_API_URL = "https://api.coingecko.com/api/v3";
-const CMC_API_KEY =
-  process.env.CMC_API_KEY || "4d1ecf1e-d930-4c5b-81d1-96b080287f47";
+const CMC_API_KEY = process.env.CMC_API_KEY;
 
 const COINGECKO_API_KEY = process.env.COINGECKO_API_KEY;
 
