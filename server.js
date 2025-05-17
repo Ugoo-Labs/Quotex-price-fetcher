@@ -102,7 +102,7 @@ app.get("/api/cmc/price/:coinIds", async (req, res) => {
           "X-CMC_PRO_API_KEY": CMC_API_KEY,
         },
         params: {
-          slug: coinIds,
+          id: coinIds,
         },
       }
     );
